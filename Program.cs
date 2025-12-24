@@ -1,5 +1,6 @@
 ﻿using TicTacToe;
-GameManager game = new();
+
+GameManager game = new(5);
 
 while(game.Winner == BoardBox.None)
 {

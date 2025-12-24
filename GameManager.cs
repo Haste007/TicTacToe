@@ -12,7 +12,7 @@ public class GameManager
         {
             Console.Clear();
         }
-        System.Console.WriteLine("------------Tic Tac Toe---------------------");
+        System.Console.WriteLine("---------------Tic Tac Toe---------------------");
         for(int i = 0; i< BoardSize; i++)
         {
             Console.Write("|");
@@ -24,7 +24,7 @@ public class GameManager
                     case BoardBox.None:
                         int boxNo = (i*BoardSize)+j;
                         string printed = boxNo < 10? $"0{boxNo}":$"{boxNo}";
-                        System.Console.Write($"| {boxNo} |");
+                        System.Console.Write($"| {printed} |");
                         break;
                     case BoardBox.Player1:
                         System.Console.Write($"| P1 |");
@@ -46,7 +46,7 @@ public class GameManager
 
     public void TakeTurn(int choice)
     {
-        TakeTurn((choice)%BoardSize , (choice)/3);
+        TakeTurn((choice)%BoardSize , (choice)/BoardSize);
     }
 
     public void TakeTurn(int col,int row)
@@ -73,18 +73,29 @@ public class GameManager
 
     private void SetBoard()
     {
-        Board = [[BoardBox.None,BoardBox.None,BoardBox.None],
-                [BoardBox.None,BoardBox.None,BoardBox.None],
-                [BoardBox.None,BoardBox.None,BoardBox.None]];
+        Board = new BoardBox[BoardSize][];
+        for (int i = 0; i < BoardSize; i++)
+        {
+            Board[i] = new BoardBox[BoardSize];
+        }
+
         Player1Turn = true;
         Winner = BoardBox.None;
     }
 
     public GameManager()
     {
-        Board = new BoardBox[3][];
+        BoardSize = 3;
         SetBoard();
     }
+
+    public GameManager(int customSize)
+    {
+       BoardSize = Math.Clamp(customSize,1,10);
+       SetBoard();
+
+    }
+
 
     public void ResetGame()
     {
@@ -131,6 +142,7 @@ public class GameManager
 
         //Check for diagonals
         //Main Diagonal
+
         for(int i=0; i< BoardSize; i++)
         {
             isDiagonal = true;
@@ -140,13 +152,14 @@ public class GameManager
         }
 
         //Anti Diagonal
-        for(int i=0; i< BoardSize; i++)
-        {
-            isDiagonal = true;
-            if(Board[i][BoardSize-i-1] == player) continue;
-            isDiagonal = false;
-            break;
-        }
+        if(!isDiagonal)
+            for(int i=0; i< BoardSize; i++)
+            {
+                isDiagonal = true;
+                if(Board[i][BoardSize-i-1] == player) continue;
+                isDiagonal = false;
+                break;
+            }
 
         if(isDiagonal || isHorizontal || isVertical) Winner = player;
         return;
